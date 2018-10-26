@@ -1,0 +1,23 @@
+body {
+    font-family: Aller Regular;
+    padding: 3em;
+    background: #fff;
+    color: green;
+}
+.result{
+    border: 0.1px solid blue;
+    padding: 50px;
+    margin-left: 50px;
+    margin-right: 50px;
+    color: green;
+    margin-top: 50px;
+    min-height: 200px;
+}
+.main{
+    text-align: center;
+    font-size: 16px;
+}
+.signin{
+    float: right;
+    transform: translateY(-25px);
+}

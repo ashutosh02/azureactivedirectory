@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Azure 201 Demo Page</title>
+        <meta charset="utf-8" />
+        <link rel="stylesheet" type="text/css" href="./style/style.css">
+        <script src="https://secure.aadcdn.microsoftonline-p.com/lib/1.0.11/js/adal.min.js"></script>
+    </head>
+    <body>
+        <p class="main">
+            Azure demo App for Authentication OAuth grant flow Based.
+        </p>
+        <p class="signin">
+            <a href="#" onclick="authContext.login(); return false;">Sigin</a> |
+            <a href="#" onclick="authContext.logOut(); return false;">Signout</a>
+        </p>
+        <p id="username"></p>
+        <pre class="result" id="api_response"></pre>
+
+        <script type="text/javascript">
+            var authContext = new AuthenticationContext({
+                tenant: '08de5639-c134-4eb0-823c-56f794dd4aa9',
+                clientId: '1ac010d4-e89f-48c5-9848-c211c7e3dc65',
+                postLogoutRedirectUri: 'https://azure201v01@azurewebsites.net/'
+            });
+            var getCurrentUser = function (access_token) {
+                document.getElementById('api_response').textContent = 'Fetching API Data...';
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'https://graph.microsoft.com/v1.0/me', true);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + access_token);
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4 && xhr.status === 200) {
+                        document.getElementById('api_response').textContent =
+                            JSON.stringify(JSON.parse(xhr.responseText), null, '  ');
+                    } else {
+                        document.getElementById('api_response').textContent =
+                            'ERROR:\n\n' + xhr.responseText;
+                    }
+                };
+                xhr.send();
+            }
+            if (authContext.isCallback(window.location.hash)) {
+                authContext.handleWindowCallback();
+                var err = authContext.getLoginError();
+                if (err) {
+                    document.getElementById('api_response').textContent =
+                        'ERROR:\n\n' + err;
+                }
+            } else {
+                var user = authContext.getCachedUser();
+                if (user) {
+                    document.getElementById('username').textContent = 'Loged in as: ' + user.userName;
+                    document.getElementById('api_response').textContent = 'Getting access token...';
+                    
+                    authContext.acquireToken(
+                        'https://graph.microsoft.com',
+                        function (error, token) {
+                            if (error || !token) {
+                                document.getElementById('api_response').textContent =
+                                    'ERROR:\n\n' + error;
+                                return;
+                            }
+                            getCurrentUser(token);
+                        }
+                    );
+                } else {
+                    document.getElementById('username').textContent = 'Not signed in.';
+                    document.getElementById('api_response').textContent = 'Please Signed In first to fetch your Details...';
+                }
+            }
+        </script>
+    </body>
+</html>
