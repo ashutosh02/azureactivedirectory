@@ -15,13 +15,13 @@
             <a href="#" onclick="authContext.logOut(); return false;">Signout</a>
         </p>
         <p id="username"></p>
-        <pre class="result" id="api_response"></pre>
+        
 
         <script type="text/javascript">
             var authContext = new AuthenticationContext({
                 tenant: '08de5639-c134-4eb0-823c-56f794dd4aa9',
                 clientId: '1ac010d4-e89f-48c5-9848-c211c7e3dc65',
-                postLogoutRedirectUri: 'https://azureactive@azurewebsites.net/'
+                postLogoutRedirectUri: 'https://azurewebapp201.azurewebsites.net/'
             });
             var getCurrentUser = function (access_token) {
                 document.getElementById('api_response').textContent = 'Fetching API Data...';
